@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="RubyGraphCalculator.Core.Tests/RubyGraphCalculator.Core.Tests.csproj" />
+  <Project Path="RubyGraphCalculator.Core/RubyGraphCalculator.Core.csproj" />
+  <Project Path="RubyGraphCalculator.UI.Tests/RubyGraphCalculator.UI.Tests.csproj" />
+  <Project Path="RubyGraphCalculator.UI/RubyGraphCalculator.UI.csproj" />
+</Solution>
