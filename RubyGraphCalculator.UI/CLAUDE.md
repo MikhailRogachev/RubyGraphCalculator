@@ -21,3 +21,9 @@
 - Output: to a file (`logs/` folder, in `.gitignore`) and to the debug window.
 - The dependency is injected as `Serilog.ILogger` so it can be mocked in tests.
 - Exceptions from `RubyGraphCalculator.Core` are caught in `RubyGraphCalculator.UI` and logged.
+
+## Folder structure
+- Folders by MVVM role: `Views/`, `ViewModels/`, `Commands/`, `Behaviors/`.
+  New code goes into the matching folder; ask before creating a new top-level folder
+- Namespace matches the folder: `RubyGraphCalculator.UI.Views`
+- `App.xaml` stays in the project root; its `StartupUri` points to `Views/MainWindow.xaml`

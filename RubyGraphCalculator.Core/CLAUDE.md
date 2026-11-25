@@ -9,6 +9,8 @@
 - `Angle` is normalized on creation to the range [0°, 360°) by removing full turns.
   Negative angles are normalized too: 450° → 90°, -90° → 270°, -450° → 270°, 720° → 0°.
   Radians are normalized the same way, to [0, 2π). The result is never equal to 360° (or 2π)
+- `FromDegrees` normalizes in degrees first, then converts to radians, so whole-degree angles
+  are normalized exactly (e.g. -36000° → 0°, not 359.999...°)
 - `Angle.FromDegrees` and `Angle.FromRadians` throw `ArgumentException` for NaN and infinity
 - FFT accepts signals of any length. Signals whose length is not a power of two are zero-padded to the next power of two; FFT is implemented with the Cooley-Tukey algorithm
 - FFT returns amplitudes for frequencies from 0 to sample rate / 2, together with the frequency of each point
@@ -16,3 +18,8 @@
 - Core does not throw for frequencies above Nyquist. It exposes the Nyquist frequency so the UI can warn
 - Input data errors are handled via exceptions (`ArgumentException`, etc.) `RubyGraphCalculator.UI` is responsible for logging them
 - Every new feature must include tests in `RubyGraphCalculator.Core.Tests`
+
+## Folder structure
+- Folders by feature: `Angles/`, `Trigonometry/`, `Signals/`, `Spectrum/`.
+  New code goes into the matching folder; ask before creating a new top-level folder
+- Namespace matches the folder: `RubyGraphCalculator.Core.Angles`
