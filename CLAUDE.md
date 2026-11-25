@@ -45,3 +45,6 @@
 - Never commit or push directly to `main`. Create a separate branch for each task
 - Run `dotnet test` before committing: all tests must pass
 - Merge changes into `main` only via pull request: `gh pr create`
+- Do not change `global.json` without an explicit request
+- Do not change the version in `Directory.Build.props` without an explicit request
+- Do not modify `.github/workflows/` without an explicit request
