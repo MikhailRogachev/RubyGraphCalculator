@@ -16,6 +16,15 @@
 - `Trig.Cos` is implemented via `Trig.Sin`: cos x = sin(x + π/2)
 - Core never calls `Math.Sin`, `Math.Cos` or other `Math` trigonometric functions.
   Tests may use them as a reference
+- `SignalGenerator.Sin(frequency, amplitude, phase, sampleRate, duration)` returns `Signal(Time, Values)`
+- Valid ranges (outside → `ArgumentException`, also for NaN and infinity):
+  frequency 40–30 000 Hz, amplitude 0.1–5, sampleRate 1 000–192 000 Hz, duration 0.1–20 s
+- Number of samples: N = floor(duration × sampleRate + 1e-9). The small epsilon prevents
+  losing a sample to rounding (0.7 s × 44 100 Hz = 30 869.999…, but N must be 30 870)
+- Times: tₙ = n / sampleRate, starting at 0
+- The phase of each sample is computed directly from n, never accumulated.
+  Reduce to the fractional number of cycles first: (frequency · n mod sampleRate) / sampleRate,
+  then multiply by 2π — computing 2π·f·t directly loses precision for long signals
 - FFT accepts signals of any length. Signals whose length is not a power of two are zero-padded to the next power of two; FFT is implemented with the Cooley-Tukey algorithm
 - FFT returns amplitudes for frequencies from 0 to sample rate / 2, together with the frequency of each point
 - Amplitudes are normalized: a sine wave with amplitude A produces a peak of height A
