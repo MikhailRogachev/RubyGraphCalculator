@@ -21,6 +21,26 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      # Core must implement its own trigonometry (see RubyGraphCalculator.Core/CLAUDE.md).
+      # The tests compare Trig.Sin/Trig.Cos with Math.Sin/Math.Cos, so an implementation that
+      # simply calls Math.Sin would pass every test. Behaviour tests cannot detect how a result
+      # is computed, so this step enforces the rule directly. Tests may still use Math as a reference.
+      # The pattern requires "(" so that mentions in comments (e.g. "System.Math.Sin") are allowed.
+      - name: Check that Core does not use Math trigonometric functions
+        shell: pwsh
+        run: |
+          $pattern = '\bMathF?\.(Sin|Cos|Tan|Asin|Acos|Atan|Atan2|SinCos|Sinh|Cosh|Tanh)\s*\(|using\s+static\s+System\.MathF?\s*;'
+          $hits = Get-ChildItem -Path RubyGraphCalculator.Core -Recurse -Filter *.cs |
+            Where-Object { $_.FullName -notmatch '[\\/](bin|obj)[\\/]' } |
+            Select-String -Pattern $pattern
+          if ($hits) {
+            foreach ($hit in $hits) {
+              Write-Host "::error file=$($hit.Path),line=$($hit.LineNumber)::Math trigonometric function used in Core: $($hit.Line.Trim())"
+            }
+            exit 1
+          }
+          Write-Host "OK: no Math trigonometric functions in RubyGraphCalculator.Core"
+
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:

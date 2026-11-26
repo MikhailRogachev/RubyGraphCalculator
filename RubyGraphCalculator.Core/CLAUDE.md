@@ -12,6 +12,10 @@
 - `FromDegrees` normalizes in degrees first, then converts to radians, so whole-degree angles
   are normalized exactly (e.g. -36000° → 0°, not 359.999...°)
 - `Angle.FromDegrees` and `Angle.FromRadians` throw `ArgumentException` for NaN and infinity
+- `Trig.Sin` reduces the angle from [0, 2π) to [0, π/2] using symmetry, then evaluates a Taylor series
+- `Trig.Cos` is implemented via `Trig.Sin`: cos x = sin(x + π/2)
+- Core never calls `Math.Sin`, `Math.Cos` or other `Math` trigonometric functions.
+  Tests may use them as a reference
 - FFT accepts signals of any length. Signals whose length is not a power of two are zero-padded to the next power of two; FFT is implemented with the Cooley-Tukey algorithm
 - FFT returns amplitudes for frequencies from 0 to sample rate / 2, together with the frequency of each point
 - Amplitudes are normalized: a sine wave with amplitude A produces a peak of height A
