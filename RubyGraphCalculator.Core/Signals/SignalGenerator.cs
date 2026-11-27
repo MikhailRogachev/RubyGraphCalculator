@@ -38,33 +38,8 @@ public static class SignalGenerator
     /// Frequencies above the Nyquist frequency (sampleRate / 2) are allowed: the signal is generated
     /// as is and shows aliasing.
     /// </remarks>
-    public static Signal Sin(double frequency, double amplitude, Angle phase, int sampleRate, double duration)
-    {
-        EnsureInRange(frequency, MinFrequency, MaxFrequency, nameof(frequency));
-        EnsureInRange(amplitude, MinAmplitude, MaxAmplitude, nameof(amplitude));
-        ArgumentNullException.ThrowIfNull(phase);
-        EnsureInRange(sampleRate, MinSampleRate, MaxSampleRate, nameof(sampleRate));
-        EnsureInRange(duration, MinDuration, MaxDuration, nameof(duration));
-
-        var count = (int)Math.Floor(duration * sampleRate + SampleCountEpsilon);
-        var time = new double[count];
-        var values = new double[count];
-
-        for (var n = 0; n < count; n++)
-        {
-            time[n] = (double)n / sampleRate;
-
-            // The phase is computed directly from n, never accumulated. The number of cycles
-            // f · n / sampleRate is reduced to its fractional part before multiplying by 2π:
-            // 2π · f · t itself reaches millions of radians for long signals and loses precision.
-            var fractionalCycles = frequency * n % sampleRate / sampleRate;
-            var angle = Angle.FromRadians(TwoPi * fractionalCycles + phase.Radians);
-
-            values[n] = amplitude * Trig.Sin(angle);
-        }
-
-        return new Signal(time, values);
-    }
+    public static Signal Sin(double frequency, double amplitude, Angle phase, int sampleRate, double duration) =>
+        Sum([new SineComponent(frequency, amplitude, phase)], sampleRate, duration);
 
     /// <summary>
     /// Generates the sum of 1 to 4 sine waves, all sampled on one time grid t = n / sampleRate
@@ -127,7 +102,9 @@ public static class SignalGenerator
 
             for (var k = 0; k < frequencies.Length; k++)
             {
-                // As in Sin: the phase comes from the fractional number of cycles, never accumulated.
+                // The phase is computed directly from n, never accumulated. The number of cycles
+                // f · n / sampleRate is reduced to its fractional part before multiplying by 2π:
+                // 2π · f · t itself reaches millions of radians for long signals and loses precision.
                 var fractionalCycles = frequencies[k] * n % sampleRate / sampleRate;
                 var angle = Angle.FromRadians(TwoPi * fractionalCycles + phases[k]);
 

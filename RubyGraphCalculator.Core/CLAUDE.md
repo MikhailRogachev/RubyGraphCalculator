@@ -33,6 +33,7 @@
 - `Sum` is computed in one pass: for each sample n, add up all components. Never generate each component
   as a separate `Signal` and add the arrays (4 components at 20 s × 192 kHz would allocate ~250 MB).
   The phase of each component is computed as in `Sin` (fractional cycles, never accumulated)
+- `Sin` is implemented via `Sum` with one component. Do not duplicate the generation logic in `Sin`
 - FFT accepts signals of any length. Signals whose length is not a power of two are zero-padded to the next power of two; FFT is implemented with the Cooley-Tukey algorithm
 - FFT returns amplitudes for frequencies from 0 to sample rate / 2, together with the frequency of each point
 - Amplitudes are normalized: a sine wave with amplitude A produces a peak of height A
