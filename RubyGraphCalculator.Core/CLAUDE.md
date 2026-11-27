@@ -25,6 +25,14 @@
 - The phase of each sample is computed directly from n, never accumulated.
   Reduce to the fractional number of cycles first: (frequency · n mod sampleRate) / sampleRate,
   then multiply by 2π — computing 2π·f·t directly loses precision for long signals
+- A sum of sine waves: `SignalGenerator.Sum(IReadOnlyList<SineComponent> components, int sampleRate, double duration)`
+  returns `Signal(Time, Values)`. `SineComponent` is `record SineComponent(double Frequency, double Amplitude, Angle Phase)`
+  in `Signals/`. Sample rate and duration are passed once: all components share one time grid
+- `Sum` accepts 1 to 4 components; 0, more than 4 or null → `ArgumentException`.
+  Each component uses the same ranges as `Sin`. Components with equal frequencies are allowed
+- `Sum` is computed in one pass: for each sample n, add up all components. Never generate each component
+  as a separate `Signal` and add the arrays (4 components at 20 s × 192 kHz would allocate ~250 MB).
+  The phase of each component is computed as in `Sin` (fractional cycles, never accumulated)
 - FFT accepts signals of any length. Signals whose length is not a power of two are zero-padded to the next power of two; FFT is implemented with the Cooley-Tukey algorithm
 - FFT returns amplitudes for frequencies from 0 to sample rate / 2, together with the frequency of each point
 - Amplitudes are normalized: a sine wave with amplitude A produces a peak of height A
